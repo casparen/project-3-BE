@@ -20,8 +20,8 @@ app.use(cors());
 
 const userArr = [
     {Fname: "Harry", mNumber: "+19175172934", dob:"1203"},
-    {Fname: "Al", mNumber: "+12017804856", dob: "0811"},
-    {Fname: "Mimi", mNumber: "+9175763311", dob: "0911"},
+    {Fname: "Al", mNumber: "+12017804856", dob: "0812"},
+    {Fname: "Mimi", mNumber: "+9175763311", dob: "0811"},
     {Fname: "Casper", mNumber: "+6318006170", dob: "1103"}
 ];
 
@@ -35,23 +35,28 @@ const userArr = [
 //     });
 // });
 
-////////////////////////////////////////////////////////////birthday kid
-var job = new cronJob('* * * * * *', function (useArr) {
-    let arr1 = userArr.filter(each => each.dob === format('MM', new Date()) + (parseInt(format('dd', new Date()), 10) + 1));
+////////////////////////////////////////////////////////////Sending Reminder Message 1 day ahead
+//using the test number at the moment
+var job = new cronJob('15 40 14 * * *', function (useArr) {
+    const arr1 = userArr.filter(each => each.dob === format('MM', new Date()) + (parseInt(format('dd', new Date()), 10) + 1));
+    console.log(arr1);
 
     if (arr1.length > 0) {
-      const arr2 = userArr.map(each => each.mNumber);
-      // console.log(arr2);
+      // const arr2 = userArr.map(each => each.mNumber);
+      const arr2 = userArr.filter(each => each.dob !== format('MM', new Date()) + (parseInt(format('dd', new Date()), 10) + 1)).map(each => each.mNumber);
+      console.log(arr2);
 
-      arr2.map(each => { client.sms.messages.create({
+      arr2.map(each => {
+        console.log(arr1[0].Fname);
+        client.sms.messages.create({
           to: each,
-          from: TWILIO_NUMBER,
-          body: `BIRTHDAY REMINDER: Tomorrow is ${arr1.Fname}'s birthday!'`
-        }, (err, data) => console.log(data.body))
+          from: "+15005550006",
+          body: `BIRTHDAY REMINDER: Tomorrow is ${arr1[0].Fname}'s birthday!'`
+        }, (err, data) => console.log(data) )
       })
 
     }
-    console.log(arr1);
+    // console.log(arr1);
 
 
     // for (let i = 0; i < userArr.length; i++) {
