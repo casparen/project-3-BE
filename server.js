@@ -37,7 +37,21 @@ const userArr = [
 ////////////////////////////////////////////////////////////birthday kid
 var job = new cronJob('* * * * * *', function (useArr) {
     let arr1 = userArr.filter(each => each.dob === format('MM', new Date()) + (parseInt(format('dd', new Date()), 10) + 1));
+
+    if (arr1.length > 0) {
+      const arr2 = userArr.map(each => each.mNumber);
+      // console.log(arr2);
+
+      arr2.map(each => { client.sms.messages.create({
+          to: each,
+          from: TWILIO_NUMBER,
+          body: `BIRTHDAY REMINDER: Tomorrow is ${arr1.Fname}'s birthday!'`
+        }, (err, data) => console.log(data.body))
+      })
+
+    }
     console.log(arr1);
+
 
     // for (let i = 0; i < userArr.length; i++) {
     //     if (userArr[i].dob == format('MM', new Date()) + (parseInt(format('dd', new Date()), 10) + 1)) {
