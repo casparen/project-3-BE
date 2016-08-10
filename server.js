@@ -5,14 +5,8 @@ const bodyParser = require('body-parser');
 const format = require('date-format');
 const twilio = require('twilio');
 const cronJob = require('cron').CronJob;
-<<<<<<< HEAD
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
 const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
-=======
-const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID
-const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN
-const TWILIO_NUMBER = process.env.TWILIO_NUMBER
->>>>>>> e341b8fc0cc3d7d32e2edbd38d2b4bd9851d44bd
 const client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
 const app = express();
 
@@ -22,8 +16,6 @@ const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cors());
-
-
 
 const userArr = [
     {Fname: "Harry", mNumber: "+19175172934", dob:"1203"},
@@ -45,17 +37,7 @@ const userArr = [
 ////////////////////////////////////////////////////////////birthday kid
 var job = new cronJob('* * * * * *', function (useArr) {
     let arr1 = userArr.filter(each => each.dob === format('MM', new Date()) + (parseInt(format('dd', new Date()), 10) + 1));
-    if (arr1.length > 0) {
-      const arr2 = userArr.map(each => each.mNumber);
-      // console.log(arr2);
-      arr2.map(each => {
-        client.sms.messages.create({
-          to: each,
-          from: TWILIO_NUMBER,
-          body: `BIRTHDAY REMINDER: Tomorrow is ${arr1.Fname}'s birthday!'`
-        }, (err, data) => console.log(data.body))
-      })
-    }
+    console.log(arr1);
 
     // for (let i = 0; i < userArr.length; i++) {
     //     if (userArr[i].dob == format('MM', new Date()) + (parseInt(format('dd', new Date()), 10) + 1)) {
