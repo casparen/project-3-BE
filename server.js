@@ -5,7 +5,9 @@ const bodyParser = require('body-parser');
 const format = require('date-format');
 const twilio = require('twilio');
 const cronJob = require('cron').CronJob;
-const client = twilio('ACd1cd6b3ad086ceb02af43f767ba1c60b', 'e333423f693daacd0fc388e22fbb9038');
+const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID
+const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN
+const client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
 const app = express();
 
 // const firebase = require('firebase');
