@@ -55,5 +55,5 @@ job.start();
 app.listen(PORT, () => {
     console.log(`server listening on ${PORT}`);
     console.log('RIGHT NOW: ', format(new Date()));
-    console.log('TIME:', format('MM', new Date()) + (parseInt(format('dd', new Date()), 10) + 1));
+    console.log('TIME TOMMOROW:', format('MM', new Date()) + (parseInt(format('dd', new Date()), 10) + 1));
 });
