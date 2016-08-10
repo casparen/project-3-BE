@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const format = require('date-format');
 const twilio = require('twilio');
 const cronJob = require('cron').CronJob;
+const Firebase = require('firebase')
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
 const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
 const TWILIO_NUMBER = process.env.TWILIO_NUMBER
@@ -17,6 +18,8 @@ const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cors());
+
+// userRef = new Firebase(https://bdayreminder-510ad.firebaseio.com/)
 
 const userArr = [
     {Fname: "Harry", mNumber: "+19175172934", dob:"1203"},
@@ -57,8 +60,6 @@ var job = new cronJob('15 40 14 * * *', function (useArr) {
 
     }
     // console.log(arr1);
-
-
     // for (let i = 0; i < userArr.length; i++) {
     //     if (userArr[i].dob == format('MM', new Date()) + (parseInt(format('dd', new Date()), 10) + 1)) {
     //         console.log(userArr[i].Fname)
@@ -71,6 +72,11 @@ job.start();
 //     console.log("incoming get req");
 //     return job;
 // });
+
+
+
+/////////////////////////////////////////////////
+
 
 app.listen(PORT, () => {
     console.log(`server listening on ${PORT}`);
