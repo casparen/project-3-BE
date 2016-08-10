@@ -43,13 +43,14 @@ var job = new cronJob('* * * * * *', function (useArr) {
     if (arr1.length > 0) {
       const arr2 = userArr.map(each => each.mNumber);
       // console.log(arr2);
-      arr2.map(each => {
-        client.sms.messages.create({
+
+      arr2.map(each => { client.sms.messages.create({
           to: each,
           from: TWILIO_NUMBER,
           body: `BIRTHDAY REMINDER: Tomorrow is ${arr1.Fname}'s birthday!'`
         }, (err, data) => console.log(data.body))
       })
+
     }
 
     // for (let i = 0; i < userArr.length; i++) {
