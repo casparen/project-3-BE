@@ -41,6 +41,7 @@ const userArr = [
 ////////////////////////////////////////////////////////////Sending Reminder Message 1 day ahead
 //using the test number at the moment
 var job = new cronJob('15 40 14 * * *', function (useArr) {
+    //birthday kid
     const arr1 = userArr.filter(each => each.dob === format('MM', new Date()) + (parseInt(format('dd', new Date()), 10) + 1));
     console.log(arr1);
 
@@ -75,7 +76,12 @@ job.start();
 
 
 
-/////////////////////////////////////////////////
+/////////////////////////////////////////////////Message 2 to birthday kid
+//check if current date is equal any date in object
+//          - create arr1
+//if true:  - make a call to the db, get the message data from object.
+//          - sent message to all numbers in arr1
+//          - body = object.message 
 
 
 app.listen(PORT, () => {
