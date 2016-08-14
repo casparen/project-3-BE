@@ -12,6 +12,9 @@ const TWILIO_NUMBER = process.env.TWILIO_NUMBER
 const client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
 const app = express();
 
+
+// const app = firebase.initializeApp({ ... });
+
 // const firebase = require('firebase');
 // usersRef = new Firebase('{FIREBASEURL}/Users');
 
@@ -19,14 +22,18 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cors());
 
+firebase.initializeApp(){
+  serviceAccount: "/ga/wdi/robots/users.json",
+  databaseURL: "https://happybday-d595a.firebaseio.com"
+}).then((res) => {
+  console.log(res);
+})
+
+
+
 // userRef = new Firebase(https://bdayreminder-510ad.firebaseio.com/)
 
-const userArr = [
-    {Fname: "Harry", mNumber: "+19175172934", dob:"1203"},
-    {Fname: "Al", mNumber: "+12017804856", dob: "0812"},
-    {Fname: "Mimi", mNumber: "+9175763311", dob: "0811"},
-    {Fname: "Casper", mNumber: "+6318006170", dob: "1103"}
-];
+
 
 // app.get('/', (req, res) => {
 //     numbers.map(each => {
@@ -38,9 +45,15 @@ const userArr = [
 //     });
 // });
 
+app.get('/')
+
 ////////////////////////////////////////////////////////////Sending Reminder Message 1 day ahead
 //using the test number at the moment
-var job = new cronJob('15 40 14 * * *', function (useArr) {
+var job = new cronJob('15 44 12 * * *', function (useArr) {
+
+
+
+
     //birthday kid
     const arr1 = userArr.filter(each => each.dob === format('MM', new Date()) + (parseInt(format('dd', new Date()), 10) + 1));
     console.log(arr1);
@@ -81,7 +94,7 @@ job.start();
 //          - create arr1
 //if true:  - make a call to the db, get the message data from object.
 //          - sent message to all numbers in arr1
-//          - body = object.message 
+//          - body = object.message
 
 
 app.listen(PORT, () => {
