@@ -65,11 +65,11 @@ var job = new cronJob('15 40 14 * * *', function (useArr) {
 
       arr2.map(each => {
         console.log(arr1[0].Fname);
-        // client.sms.messages.create({
-        //   to: each,
-        //   from: "+15005550006",
-        //   body: `BIRTHDAY REMINDER: Tomorrow is ${arr1[0].Fname}'s birthday!'`
-        // }, (err, data) => console.log(data) )
+        client.sms.messages.create({
+          to: each,
+          from: "+15005550006",
+          body: `BIRTHDAY REMINDER: Tomorrow is ${arr1[0].Fname}'s birthday!'`
+        }, (err, data) => console.log(data) )
       })
 
     }
