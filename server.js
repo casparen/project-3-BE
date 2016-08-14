@@ -12,9 +12,6 @@ const TWILIO_NUMBER = process.env.TWILIO_NUMBER
 const client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
 const app = express();
 
-
-// const app = firebase.initializeApp({ ... });
-
 // const firebase = require('firebase');
 // usersRef = new Firebase('{FIREBASEURL}/Users');
 
@@ -22,17 +19,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cors());
 
-firebase.initializeApp(){
-  serviceAccount: "/ga/wdi/robots/users.json",
-  databaseURL: "https://happybday-d595a.firebaseio.com"
-}).then((res) => {
-  console.log(res);
-})
-
-
-
 // userRef = new Firebase(https://bdayreminder-510ad.firebaseio.com/)
-
 
 
 // app.get('/', (req, res) => {
@@ -45,15 +32,9 @@ firebase.initializeApp(){
 //     });
 // });
 
-app.get('/')
-
 ////////////////////////////////////////////////////////////Sending Reminder Message 1 day ahead
 //using the test number at the moment
-var job = new cronJob('15 44 12 * * *', function (useArr) {
-
-
-
-
+var job = new cronJob('15 40 14 * * *', function (useArr) {
     //birthday kid
     const arr1 = userArr.filter(each => each.dob === format('MM', new Date()) + (parseInt(format('dd', new Date()), 10) + 1));
     console.log(arr1);
