@@ -12,9 +12,6 @@ const TWILIO_NUMBER = process.env.TWILIO_NUMBER
 const client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
 const app = express();
 
-
-// const app = firebase.initializeApp({ ... });
-
 // const firebase = require('firebase');
 // usersRef = new Firebase('{FIREBASEURL}/Users');
 
@@ -22,17 +19,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cors());
 
-firebase.initializeApp(){
-  serviceAccount: "/ga/wdi/robots/users.json",
-  databaseURL: "https://happybday-d595a.firebaseio.com"
-}).then((res) => {
-  console.log(res);
-})
-
-
-
 // userRef = new Firebase(https://bdayreminder-510ad.firebaseio.com/)
-
 
 
 // app.get('/', (req, res) => {
@@ -45,15 +32,28 @@ firebase.initializeApp(){
 //     });
 // });
 
-app.get('/')
+// POST REQUEST
+app.post('/message', (req, res) => {
+    console.log("SID: ", TWILIO_ACCOUNT_SID, "TOKEN: ", TWILIO_AUTH_TOKEN);
+    console.log("REQ.BODY", req.body);
+    const obj = req.body;
+    const message = `[GA birthday] ${obj.message} from -${obj.sender.toUpperCase()}-`;
+    console.log("obj: ", obj);
+    console.log("message: ", message);
+    client.messages.create({
+        to: obj.phone,
+        from: TWILIO_NUMBER,
+        body: message,
+        mediaUrl: obj.giphyUrl
+    }, (err, data) => {
+        console.log("error: ", err);
+        console.log(data);
+    })
+});
 
 ////////////////////////////////////////////////////////////Sending Reminder Message 1 day ahead
 //using the test number at the moment
-var job = new cronJob('15 44 12 * * *', function (useArr) {
-
-
-
-
+var job = new cronJob('15 40 14 * * *', function (useArr) {
     //birthday kid
     const arr1 = userArr.filter(each => each.dob === format('MM', new Date()) + (parseInt(format('dd', new Date()), 10) + 1));
     console.log(arr1);
@@ -65,11 +65,11 @@ var job = new cronJob('15 44 12 * * *', function (useArr) {
 
       arr2.map(each => {
         console.log(arr1[0].Fname);
-        client.sms.messages.create({
-          to: each,
-          from: "+15005550006",
-          body: `BIRTHDAY REMINDER: Tomorrow is ${arr1[0].Fname}'s birthday!'`
-        }, (err, data) => console.log(data) )
+        // client.sms.messages.create({
+        //   to: each,
+        //   from: "+15005550006",
+        //   body: `BIRTHDAY REMINDER: Tomorrow is ${arr1[0].Fname}'s birthday!'`
+        // }, (err, data) => console.log(data) )
       })
 
     }
@@ -80,7 +80,7 @@ var job = new cronJob('15 44 12 * * *', function (useArr) {
     //     }
     // }
 });
-job.start();
+// job.start();
 
 // app.get('/hello', function(req, res) {
 //     console.log("incoming get req");
