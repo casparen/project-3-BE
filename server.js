@@ -5,35 +5,31 @@ const bodyParser = require('body-parser');
 const format = require('date-format');
 const twilio = require('twilio');
 const cronJob = require('cron').CronJob;
-const Firebase = require('firebase')
+const firebase = require('firebase');
+const _ = require('lodash');
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
 const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
-const TWILIO_NUMBER = process.env.TWILIO_NUMBER
+const TWILIO_NUMBER = process.env.TWILIO_NUMBER;
 const client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
 const app = express();
 
-// const firebase = require('firebase');
-// usersRef = new Firebase('{FIREBASEURL}/Users');
+// firebase config
+firebase.initializeApp({
+    databaseURL: "https://happybday-d595a.firebaseio.com",
+});
+const db = firebase.database();
+const ref = db.ref("/ga/wdi/robots/users");
+ref.once("value", function(snapshot) {
+    console.log(snapshot.val());
+});
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cors());
 
-// userRef = new Firebase(https://bdayreminder-510ad.firebaseio.com/)
-
-
-// app.get('/', (req, res) => {
-//     numbers.map(each => {
-//         client.sendMessage({
-//             to: each,
-//             from: '##',
-//             body: `BIRTHDAY REMINDER: xxx's birthday is tomorrow!`
-//         }, (err, data) => console.log(data.body))
-//     });
-// });
-
-// POST REQUEST
+// POST: SEND GREETING TO BIRTHDAY USER
 app.post('/message', (req, res) => {
+    console.log("incoming post request at /message");
     console.log("SID: ", TWILIO_ACCOUNT_SID, "TOKEN: ", TWILIO_AUTH_TOKEN);
     console.log("REQ.BODY", req.body);
     const obj = req.body;
@@ -51,51 +47,31 @@ app.post('/message', (req, res) => {
     })
 });
 
-////////////////////////////////////////////////////////////Sending Reminder Message 1 day ahead
-//using the test number at the moment
-var job = new cronJob('15 40 14 * * *', function (useArr) {
-    //birthday kid
-    const arr1 = userArr.filter(each => each.dob === format('MM', new Date()) + (parseInt(format('dd', new Date()), 10) + 1));
-    console.log(arr1);
-
-    if (arr1.length > 0) {
-      // const arr2 = userArr.map(each => each.mNumber);
-      const arr2 = userArr.filter(each => each.dob !== format('MM', new Date()) + (parseInt(format('dd', new Date()), 10) + 1)).map(each => each.mNumber);
-      console.log(arr2);
-
-      arr2.map(each => {
-        console.log(arr1[0].Fname);
-        client.sms.messages.create({
-          to: each,
-          from: "+15005550006",
-          body: `BIRTHDAY REMINDER: Tomorrow is ${arr1[0].Fname}'s birthday!'`
-        }, (err, data) => console.log(data) )
-      })
-
-    }
-    // console.log(arr1);
-    // for (let i = 0; i < userArr.length; i++) {
-    //     if (userArr[i].dob == format('MM', new Date()) + (parseInt(format('dd', new Date()), 10) + 1)) {
-    //         console.log(userArr[i].Fname)
-    //     }
-    // }
+// SENDING REMINDER SMS 1 DAY AHEAD
+var job = new cronJob('00 15 10 * * *', function () {
+    ref.on("value", function(snapshot) {
+        // console.log(snapshot.val());
+        const userArr = _.values(snapshot.val());
+        //birthday kid
+        const bDayUser = userArr.filter(each => each.dob === format('MM', new Date()) + (parseInt(format('dd', new Date()), 10) + 1));
+        console.log(bDayUser);
+        if (bDayUser.length > 0) {
+            const targetUser = userArr.filter(each => each.dob !== format('MM', new Date()) + (parseInt(format('dd', new Date()), 10) + 1)).map(each => each.phone);
+            console.log(targetUser);
+            targetUser.map(each => {
+                console.log(bDayUser[0].name);
+                client.sms.messages.create({
+                    to: each,
+                    from: TWILIO_NUMBER,
+                    body: `[GA B-DAY REMINDER] Tomorrow is ${bDayUser[0].name}'s birthday!'`
+                }, (err, data) => console.log(data))
+            })
+        }
+    }, function (errorObject) {
+        console.log("The read failed: " + errorObject.code);
+    });
 });
 // job.start();
-
-// app.get('/hello', function(req, res) {
-//     console.log("incoming get req");
-//     return job;
-// });
-
-
-
-/////////////////////////////////////////////////Message 2 to birthday kid
-//check if current date is equal any date in object
-//          - create arr1
-//if true:  - make a call to the db, get the message data from object.
-//          - sent message to all numbers in arr1
-//          - body = object.message
-
 
 app.listen(PORT, () => {
     console.log(`server listening on ${PORT}`);
